@@ -114,8 +114,9 @@ function updateSurvey() {
   if (!needsConfirmation) {
     survey.querySelectorAll('[name="confirmed"]').forEach(input => { input.checked = false; });
   }
-  submitArea.hidden = !applied;
-  if (applied) renderCaptcha();
+  const locked = survey.querySelector('input').disabled;
+  submitArea.hidden = !applied || locked;
+  if (applied && !locked) renderCaptcha();
   if (!surveyStatus || surveyStatus === 'verifying' || surveyStatus === 'captcha_unavailable') {
     const waiting = applied && !captchaToken && !sending;
     if (waiting && !captchaFailed && captchaTimer === null) {
@@ -344,3 +345,128 @@ document.querySelector('#rik-copy').addEventListener('click', async () => {
   rikStatus.textContent = rikCopied[document.documentElement.lang];
   rikStatus.hidden = false;
 });
+
+// Second poll: did the visitor send the email to the commission? Answers go to
+// the Worker (/rik), anonymous, no link to the survey or to the newsletter.
+const rikPoll = document.querySelector('#rik-poll');
+const rikPollSubmitArea = rikPoll.querySelector('.rik-poll-submit');
+const rikPollButton = rikPoll.querySelector('[type="submit"]');
+const rikPollStatusEl = rikPoll.querySelector('.rik-poll-status');
+const rikPollResultsEl = rikPoll.querySelector('.rik-poll-results');
+const rikPollKey = 'srbsuae-rik-poll-v1';
+const rikPollMessages = {
+  verifying: { sr: 'Provera u toku, sačekajte nekoliko sekundi…', en: 'Verifying, please wait a few seconds…' },
+  captcha_unavailable: {
+    sr: 'Provera nije uspela. Osvežite stranicu ili isključite blokator sadržaja i pokušajte ponovo.',
+    en: 'Verification did not complete. Refresh the page or turn off content blockers and try again.'
+  },
+  saved: { sr: 'Hvala, vaš odgovor je primljen.', en: 'Thank you, your response has been received.' },
+  already_voted: { sr: 'Sa ove mreže je već primljen odgovor. Hvala.', en: 'A response from this network has already been received. Thank you.' },
+  rate_limited: { sr: 'Previše pokušaja. Pokušajte ponovo za nekoliko minuta.', en: 'Too many attempts. Please try again in a few minutes.' },
+  captcha: { sr: 'Provera nije uspela. Pokušajte ponovo.', en: 'Verification failed. Please try again.' },
+  busy: { sr: 'Anketa je trenutno preopterećena. Pokušajte kasnije.', en: 'The survey is currently busy. Please try again later.' },
+  failed: { sr: 'Odgovor nije poslat. Pokušajte ponovo za nekoliko minuta.', en: 'Your response was not sent. Please try again in a few minutes.' }
+};
+let rikPollStatus = '';
+let rikPollResults = null;
+let rikPollToken = '';
+let rikPollWidget = null;
+let rikPollFailed = false;
+let rikPollSending = false;
+let rikPollTimer = null;
+function renderRikPollStatus() {
+  rikPollStatusEl.hidden = !rikPollStatus;
+  rikPollStatusEl.classList.toggle('is-loading', rikPollStatus === 'verifying');
+  rikPollStatusEl.textContent = rikPollStatus ? rikPollMessages[rikPollStatus][document.documentElement.lang] : '';
+}
+function renderRikPollResults() {
+  const r = rikPollResults;
+  rikPollResultsEl.hidden = !r?.visible;
+  if (!r?.visible) return;
+  rikPollResultsEl.textContent = document.documentElement.lang === 'sr'
+    ? `Do sada: ${r.total} odgovora. Mejl RIK-u je poslalo ${r.sent}. Uzorak onih koji su odgovorili, nije reprezentativan.`
+    : `So far: ${r.total} responses. ${r.sent} sent an email to the REC. A sample of those who responded, not representative.`;
+}
+async function loadRikPollResults() {
+  try {
+    const response = await fetch(`${rikPoll.dataset.api}/rik-results`);
+    if (response.ok) { rikPollResults = await response.json(); renderRikPollResults(); }
+  } catch { /* Results are optional. */ }
+}
+function lockRikPoll() {
+  rikPoll.querySelectorAll('input').forEach(input => { input.disabled = true; });
+  rikPollSubmitArea.hidden = true;
+}
+// The widget is created on the first answer, when its container is visible.
+function renderRikPollCaptcha() {
+  if (rikPollWidget !== null || !window.turnstile || rikPollSubmitArea.hidden) return;
+  rikPollWidget = window.turnstile.render(rikPoll.querySelector('.rik-poll-captcha'), {
+    sitekey: rikPoll.dataset.sitekey,
+    appearance: 'interaction-only',
+    callback: value => { rikPollToken = value; rikPollFailed = false; updateRikPoll(); },
+    'expired-callback': () => { rikPollToken = ''; updateRikPoll(); },
+    'error-callback': () => { rikPollToken = ''; rikPollFailed = true; updateRikPoll(); },
+    'unsupported-callback': () => { rikPollToken = ''; rikPollFailed = true; updateRikPoll(); }
+  });
+}
+function updateRikPoll() {
+  const answer = rikPoll.querySelector('[name="sent"]:checked');
+  const locked = rikPoll.querySelector('input').disabled;
+  rikPollSubmitArea.hidden = !answer || locked;
+  if (locked) return;
+  if (answer) renderRikPollCaptcha();
+  if (['', 'verifying', 'captcha_unavailable'].includes(rikPollStatus)) {
+    const waiting = answer && !rikPollToken && !rikPollSending;
+    if (waiting && !rikPollFailed && rikPollTimer === null) rikPollTimer = setTimeout(() => { rikPollFailed = true; updateRikPoll(); }, 15000);
+    if (!waiting && rikPollTimer !== null) { clearTimeout(rikPollTimer); rikPollTimer = null; }
+    const wanted = waiting ? (rikPollFailed ? 'captcha_unavailable' : 'verifying') : '';
+    if (wanted !== rikPollStatus) { rikPollStatus = wanted; renderRikPollStatus(); }
+  }
+  rikPollButton.disabled = rikPollSending || !rikPollToken || !answer;
+}
+rikPoll.addEventListener('change', () => {
+  if (['', 'verifying', 'captcha_unavailable'].includes(rikPollStatus)) rikPollStatus = '';
+  renderRikPollStatus();
+  updateRikPoll();
+});
+rikPoll.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (rikPollButton.disabled) return;
+  rikPollSending = true;
+  rikPollStatus = '';
+  updateRikPoll();
+  try {
+    const response = await fetch(`${rikPoll.dataset.api}/rik`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ sent: rikPoll.querySelector('[name="sent"]:checked').value, token: rikPollToken })
+    });
+    if (response.ok) {
+      rikPollStatus = 'saved';
+      try { localStorage.setItem(rikPollKey, '1'); } catch { /* Marker is a convenience only. */ }
+      lockRikPoll();
+      loadRikPollResults();
+    } else {
+      const { error } = await response.json().catch(() => ({}));
+      rikPollStatus = rikPollMessages[error] ? error : 'failed';
+      if (error === 'already_voted') lockRikPoll();
+    }
+  } catch {
+    rikPollStatus = 'failed';
+  }
+  rikPollSending = false;
+  rikPollToken = '';
+  if (rikPollStatus !== 'saved' && rikPollWidget !== null) window.turnstile.reset(rikPollWidget);
+  renderRikPollStatus();
+  updateRikPoll();
+});
+try {
+  if (localStorage.getItem(rikPollKey)) { rikPollStatus = 'saved'; lockRikPoll(); }
+} catch { /* The poll still works when storage is blocked. */ }
+const waitForRikPollCaptcha = setInterval(() => {
+  if (window.turnstile) { clearInterval(waitForRikPollCaptcha); updateRikPoll(); }
+}, 200);
+newsletterRenderers.push(renderRikPollStatus, renderRikPollResults);
+renderRikPollStatus();
+loadRikPollResults();
+updateRikPoll();
