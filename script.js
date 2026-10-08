@@ -322,8 +322,8 @@ document.querySelectorAll('[data-newsletter]').forEach(setupNewsletter);
 // Nothing is sent to or stored by this site.
 const rikSubject = document.querySelector('#rik-subject');
 const rikBody = document.querySelector('#rik-body');
-const rikTo = 'rik@parlament.rs,izbori@parlament.rs';
-const rikCc = 'ozabi@mfa.rs,okp@mfa.rs,consular.abudhabi@mfa.rs,srb.emb.uae@mfa.rs,sekretarijat.mduls@mduls.gov.rs';
+const rikTo = 'ozabi@mfa.rs,okp@mfa.rs,consular.abudhabi@mfa.rs,srb.emb.uae@mfa.rs';
+const rikCc = 'sekretarijat.mduls@mduls.gov.rs,rik@parlament.rs,izbori@parlament.rs';
 const rikStatus = document.querySelector('#rik-status');
 const rikCopied = { sr: 'Tekst je kopiran.', en: 'Text copied.' };
 function rikLink() {
