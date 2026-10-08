@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zahtev za biracko mesto u Abu Dabiju</title>
+<meta name="description" content="Posalji Ministarstvu spoljnih poslova i RIK-u zahtev za biracko mesto u Abu Dabiju, sa svoje adrese.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,700&display=swap">
+<style>
+/* Jedna kolona kao formular na šalteru: numerisani koraci odozgo nadole, pismo kao list papira, slanje na kraju. */
+:root{
+  --bg:#f3f5f8; --card:#ffffff; --paper:#fdfdfb; --ink:#152033; --muted:#566173; --line:#d6dce5;
+  --navy:#1c3361; --navy-ink:#ffffff; --red:#a3302b; --ok:#2b6a4c; --warn-bg:#fbf1df; --warn-ink:#6d4a0f; --hl:#e7ecf5; --red-bg:#fbeceb;
+  --f-display:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body:"IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141c; --card:#171e29; --paper:#1b2330; --ink:#e4e8ef; --muted:#9ba5b6; --line:#2c3646;
+  --navy:#9fb6e6; --navy-ink:#0f141c; --red:#ec8a83; --ok:#7cc4a0; --warn-bg:#2f2614; --warn-ink:#f0cf8f; --hl:#24304a; --red-bg:#331b1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141c; --card:#171e29; --paper:#1b2330; --ink:#e4e8ef; --muted:#9ba5b6; --line:#2c3646;
+  --navy:#9fb6e6; --navy-ink:#0f141c; --red:#ec8a83; --ok:#7cc4a0; --warn-bg:#2f2614; --warn-ink:#f0cf8f; --hl:#24304a; --red-bg:#331b1a; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body);margin:0}
+.wrap{max-width:780px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:flex;flex-direction:column;gap:16px}
+h1,h2{font-family:var(--f-display);color:var(--navy);text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,5vw,38px);line-height:1.15;font-weight:700}
+h2{font-size:21px;line-height:1.25;font-weight:700;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--f-mono);font-size:14px;font-weight:500;color:var(--red)}
+p{margin:0}
+.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--red)}
+header{display:flex;flex-direction:column;gap:10px;padding-block:4px 6px}
+.lead{font-size:17px;color:var(--muted);max-width:62ch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.note{font-size:14.5px;color:var(--muted)}
+.priv{border-left:3px solid var(--navy);padding:10px 14px;background:var(--card);border-radius:0 8px 8px 0;font-size:14.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px 16px}
+.f{display:flex;flex-direction:column;gap:5px;min-width:0}
+.f.full{grid-column:1/-1}
+label.l{font-weight:600;font-size:15px}
+.hint{font-weight:400;color:var(--muted);font-size:13.5px}
+input[type=text],input[type=email],select,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink)}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+input.bad{border-color:var(--red)}
+.err{color:var(--red);font-size:13.5px;min-height:0}
+.err:empty{display:none}
+fieldset{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+legend{font-weight:600;font-size:15px;padding:0;margin-bottom:4px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:7px;padding:9px 14px;cursor:pointer;background:var(--card)}
+.seg label:has(input:checked){border-color:var(--navy);background:var(--hl);font-weight:600}
+.chk{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.chk input{margin-top:4px;flex:0 0 auto;width:17px;height:17px;accent-color:var(--navy)}
+.chk .em{display:block;font-family:var(--f-mono);font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.sub{padding-left:27px}
+.cclist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:10px 18px}
+.letter-head{display:flex;flex-direction:column;gap:6px}
+.letter{font-family:var(--f-display);font-size:16px;line-height:1.55;background:var(--paper);min-height:560px;padding:18px 20px;resize:vertical}
+.edited{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--warn-bg);color:var(--warn-ink);border-radius:7px;padding:10px 12px;font-size:14.5px}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btn{font:inherit;font-weight:600;font-size:15px;padding:11px 16px;border-radius:7px;border:1px solid var(--navy);background:var(--navy);color:var(--navy-ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn.sec{background:transparent;color:var(--navy)}
+.btn.small{padding:7px 12px;font-size:14px}
+.prov{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px}
+.attach{background:var(--red-bg);color:var(--ink);border:1px solid var(--red);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.attach b{font-size:15.5px;color:var(--red)}
+.attach ol{margin:0;padding-left:22px}
+.missing{color:var(--red);font-weight:600;font-size:14.5px}
+.missing:empty{display:none}
+.rows{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:8px}
+.row:first-child{border-top:0;padding-top:0}
+.row .k{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.row .v{font-family:var(--f-mono);font-size:13px;overflow-wrap:anywhere;min-width:0;max-height:5.2em;overflow:hidden}
+@media (max-width:520px){.row{grid-template-columns:1fr auto}.row .k{grid-column:1/-1}}
+.sub-card{border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.sub-card h3{margin:0;font-size:17px;color:var(--navy)}
+.em-in{display:block;font-family:var(--f-mono);font-size:12.5px;overflow-wrap:anywhere}
+details.pv summary{cursor:pointer;font-size:14.5px;color:var(--navy);font-weight:600}
+details.pv pre{white-space:pre-wrap;font-family:var(--f-mono);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:10px 12px;margin:8px 0 0;overflow-wrap:anywhere}
+.toast{color:var(--ok);font-weight:600;font-size:14.5px;min-height:1.4em}
+ol.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+footer{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+@media (prefers-reduced-motion:no-preference){.btn{transition:background .15s,color .15s}}
+.btn.sec:hover{background:var(--hl)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="eyebrow">Hitno · zahtev MSP-u i RIK-u</span>
+  <h1>Traži biračko mesto u Abu Dabiju</h1>
+  <p class="lead">Upiši ime i e-mail, pregledaj gotov zahtev i pošalji ga iz svog mejla. Primaoci i predmet su već uneti.</p>
+</header>
+
+<p class="priv"><b>Bez ličnih podataka.</b> Zahtev ne sadrži JMBG ni dokumenta. Stranica ništa ne čuva i ne šalje; mejl šalješ ti, sa svoje adrese.</p>
+
+<section class="card" aria-labelledby="h1s">
+  <h2 id="h1s"><span class="n">1</span>Ko piše</h2>
+  <div class="grid">
+    <div class="f"><label class="l" for="ime">Ime i prezime <span class="hint">(potpis u mejlu)</span></label><input type="text" id="ime" autocomplete="name" placeholder="npr. Jovana Petrović"></div>
+    <div class="f"><label class="l" for="mail">Tvoj e-mail <span class="hint">(na njega stiže odgovor)</span></label><input type="email" id="mail" autocomplete="email" placeholder="npr. jovana@gmail.com"></div>
+    <div class="f"><label class="l" for="rod">Pišem kao</label>
+      <select id="rod"><option value="m">birač (muški rod)</option><option value="z">biračica (ženski rod)</option></select></div>
+  </div>
+</section>
+
+<section class="card" aria-labelledby="h2s">
+  <h2 id="h2s"><span class="n">2</span>Pregledaj mejl</h2>
+  <p class="note">Tekst je bez slova č, ć, š, ž i đ, da ga nijedan mejl program ne pokvari. Slobodno ga izmeni.</p>
+  <div class="letter-head"><label class="l" for="predmet">Predmet</label><input type="text" id="predmet"></div>
+  <div class="edited" id="edited" hidden>Ručno si menjao/la tekst, pa se više ne menja sam. <button type="button" class="btn sec small" id="regen">Vrati tekst iz podataka</button></div>
+  <label class="l" for="tekst">Tekst</label>
+  <textarea id="tekst" class="letter" spellcheck="false" style="min-height:420px"></textarea>
+</section>
+
+<section class="card" aria-labelledby="h3s">
+  <h2 id="h3s"><span class="n">3</span>Pošalji sa svoje adrese</h2>
+  <div class="note"><b>Prima:</b>
+    <ul id="primaoci" style="margin:6px 0 0;padding-left:20px;font-size:14px"></ul>
+  </div>
+  <p class="missing" id="missing" role="status"></p>
+  <div class="prov" id="prov">
+    <a class="btn send" id="s-gmail" target="_blank" rel="noopener">Gmail</a>
+    <a class="btn send" id="s-outlook" target="_blank" rel="noopener">Outlook / Hotmail</a>
+    <a class="btn send" id="s-o365" target="_blank" rel="noopener">Outlook (posao, škola)</a>
+    <a class="btn send" id="s-yahoo" target="_blank" rel="noopener">Yahoo Mail</a>
+    <a class="btn sec send" id="s-mailto">Mejl aplikacija</a>
+  </div>
+  <p class="note" id="mob-savet" hidden></p>
+  <p class="missing" id="nije-otvoreno" role="status"></p>
+  <p class="note">Ako dugme ne otvori mejl, napravi nov mejl ručno i kopiraj polje po polje:</p>
+  <div class="rows">
+    <div class="row"><span class="k">Prima</span><span class="v" id="v-to"></span><button type="button" class="btn sec small" data-copy="to">Kopiraj</button></div>
+    <div class="row"><span class="k">Predmet</span><span class="v" id="v-su"></span><button type="button" class="btn sec small" data-copy="su">Kopiraj</button></div>
+    <div class="row"><span class="k">Tekst</span><span class="v" id="v-body"></span><button type="button" class="btn sec small" data-copy="body">Kopiraj</button></div>
+  </div>
+  <p class="toast" id="toast" role="status"></p>
+</section>
+
+<footer>
+  <p>Stranica ne koristi kolačiće, analitiku ni server. Sve što upišeš nestaje kad je zatvoriš.</p>
+</footer>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const PRIM = [
+  ["ozabi@mfa.rs", "Đuro Likar, Odeljenje za Afriku i Bliski istok"],
+  ["okp@mfa.rs", "Nataša Raščević, konzularna pitanja"],
+  ["consular.abudhabi@mfa.rs", "Ambasada u Abu Dabiju"],
+  ["srb.emb.uae@mfa.rs", "Vladimir Marić, ambasador u UAE"],
+  ["kontakt@mduls.gov.rs", "Ministarstvo državne uprave i lokalne samouprave"],
+  ["izbori@rik.parlament.gov.rs", "Republička izborna komisija"],
+  ["rik@parlament.rs", "Republička izborna komisija"],
+];
+const TO = PRIM.map((r) => r[0]);
+const PREDMET = "HITNO: Zahtev za preispitivanje i dopunu odluke o odredjivanju birackih mesta u inostranstvu i omogucavanje glasanja biracima sa teritorije Ujedinjenih Arapskih Emirata";
+
+// ---------- ASCII: bez č, ć, š, ž, đ i ćirilice ----------
+const CYR = "абвгдђежзијклљмнњопрстћуфхцчџш";
+const LAT = ["a","b","v","g","d","dj","e","z","z","i","j","k","l","lj","m","n","nj","o","p","r","s","t","c","u","f","h","c","c","dz","s"];
+function ascii(s) {
+  let r = "";
+  for (const ch of String(s || "")) {
+    const lo = ch.toLowerCase(), i = CYR.indexOf(lo);
+    if (i >= 0) { const t = LAT[i]; r += ch === lo ? t : t.charAt(0).toUpperCase() + t.slice(1); } else r += ch;
+  }
+  return r.replace(/đ/g, "dj").replace(/Đ/g, "Dj").replace(/[„“”«»]/g, '"').replace(/[‘’‚]/g, "'").replace(/[–—]/g, "-").replace(/…/g, "...")
+    .normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^\x00-\x7F]/g, "");
+}
+
+
+// ---------- tekst ----------
+const FORMS = {
+    m: { opening: "kao birač koji je blagovremeno podneo zahtev za glasanje u inostranstvu i koji ima boravište u Abu Dabiju", sign: "Birač – državljanin Republike Srbije" },
+    z: { opening: "kao biračica koja je blagovremeno podnela zahtev za glasanje u inostranstvu i koja ima boravište u Abu Dabiju", sign: "Biračica – državljanka Republike Srbije" }
+  };
+
+function body(rod, ime, mail) {
+    var f = FORMS[rod];
+    return [
+"Poštovani,",
+"Obraćam Vam se " + f.opening + ", Ujedinjeni Arapski Emirati, povodom određivanja biračkih mesta u inostranstvu za izbore za narodne poslanike Narodne skupštine Republike Srbije, raspisane za 25. oktobar 2026. godine.",
+"Posebno ukazujem na Odluku Republičke izborne komisije o određivanju biračkih mesta u inostranstvu za glasanje na navedenim izborima, donetu 4. oktobra 2026.",
+"Ovakva odluka neposredno utiče na mogućnost ostvarivanja biračkog prava državljana Republike Srbije koji se na dan glasanja nalaze u Ujedinjenim Arapskim Emiratima.",
+"I. PRAVNI OSNOV",
+"Članom 2. Zakona o izboru narodnih poslanika propisano je da građani biraju narodne poslanike na osnovu opšteg i jednakog izbornog prava, dok član 3. istog zakona utvrđuje biračko pravo punoletnog državljanina Republike Srbije pod zakonom propisanim uslovima.",
+"Prema članu 56. Zakona o izboru narodnih poslanika, Republička izborna komisija određuje biračka mesta u inostranstvu na predlog ministarstva nadležnog za spoljne poslove.",
+"Istovremeno, član 57. Zakona propisuje da se biračko mesto određuje tako da bude pristupačno biračima i da im omogući da bez teškoća glasaju.",
+"Iz navedenih odredaba proizlazi da činjenica da RIK formalno odlučuje o biračkim mestima na predlog Ministarstva spoljnih poslova ne znači da se prilikom odlučivanja mogu zanemariti zakonski kriterijumi pristupačnosti biračkog mesta i mogućnosti birača da bez teškoća ostvari svoje biračko pravo.",
+"U konkretnom slučaju, biračima koji se nalaze u Abu Dabiju trenutno nije omogućeno da svoje biračko pravo ostvare u Ujedinjenim Arapskim Emiratima.",
+"Najbliže određeno biračko mesto, prema trenutno dostupnim podacima, nalazi se u Nikoziji, Republici Kipar, na udaljenosti od približno 2.350 km od Abu Dabija, dok bi alternativa bila putovanje u Republiku Srbiju, na udaljenost od približno 3.800 km u jednom pravcu.",
+"Takva udaljenost, imajući u vidu troškove putovanja, trajanje puta, eventualnu potrebu za odsustvom sa posla i druge praktične okolnosti, predstavlja značajno opterećenje za birače koji žive u Ujedinjenim Arapskim Emiratima i dovodi u pitanje da li je biračima sa ove teritorije faktički omogućeno da glasaju bez teškoća, u smislu člana 57. Zakona.",
+"Posebno ističem da je na prethodnim izborima za narodne poslanike 2023. godine biračko mesto bilo određeno u Abu Dabiju, odnosno u Ambasadi Republike Srbije u Ujedinjenim Arapskim Emiratima.",
+"Takođe, prema javno dostupnim informacijama, za aktuelne izbore se iz Ujedinjenih Arapskih Emirata prijavio značajan broj birača, što dodatno ukazuje na postojanje realnog interesa za ostvarivanje biračkog prava na teritoriji ove države.",
+"II. POTREBA ZA TRANSPARENTNIM OBRAZLOŽENJEM KRITERIJUMA",
+"S obzirom na to da RIK biračka mesta u inostranstvu određuje na predlog Ministarstva spoljnih poslova, smatram naročito važnim da Ministarstvo javnosti i zainteresovanim biračima obrazloži kriterijume na osnovu kojih je predloženo da se biračko mesto ne odredi u Abu Dabiju.",
+"Molim da se posebno uzme u obzir da Zakon ne propisuje samo broj birača kao relevantnu okolnost, već član 57. zahteva da biračko mesto bude pristupačno biračima i da im omogući da bez teškoća glasaju.",
+"Stoga smatram opravdanim da se, prilikom odlučivanja o biračkom mestu u Abu Dabiju, posebno cene:",
+"• broj blagovremeno prijavljenih birača sa teritorije Ujedinjenih Arapskih Emirata;\n• teritorijalna udaljenost birača od najbližeg određenog biračkog mesta;\n• mogućnost putovanja do najbližeg biračkog mesta;\n• vreme i troškovi potrebni za takvo putovanje;\n• činjenica da je u Abu Dabiju na prethodnim parlamentarnim izborima postojalo biračko mesto;\n• činjenica da Republika Srbija u Abu Dabiju ima diplomatsko-konzularno predstavništvo koje je ranije bilo korišćeno za sprovođenje glasanja;\n• bezbednosni, organizacioni i drugi konkretni razlozi zbog kojih bi eventualno bilo nemoguće organizovati glasanje u Abu Dabiju.",
+"Ukoliko je prilikom izrade predloga Ministarstva primenjen poseban kriterijum koji je doveo do izostavljanja Abu Dabija, molim da se taj kriterijum precizno navede, zajedno sa pravnim osnovom i konkretnim podacima na osnovu kojih je utvrđeno da uslovi za određivanje biračkog mesta nisu ispunjeni.",
+"III. ZAHTEV ZA HITNO PREISPITIVANJE I DOPUNU ODLUKE",
+"Imajući u vidu da izbori treba da budu održani 25. oktobra 2026. godine, da je do dana glasanja preostalo malo vremena i da je, prema javno dostupnim informacijama, i nakon odluke od 7. oktobra ostavljena mogućnost naknadnog određivanja odnosno dopune biračkih mesta u inostranstvu, molim da se bez odlaganja preispita mogućnost određivanja biračkog mesta u Ambasadi Republike Srbije u Abu Dabiju.",
+"U tom smislu zahtevam:",
+"1. Da Ministarstvo spoljnih poslova bez odlaganja Republičkoj izbornoj komisiji dostavi predlog za dopunu odnosno izmenu odluke o određivanju biračkih mesta u inostranstvu tako da se za izbore 25. oktobra 2026. godine odredi biračko mesto u Ambasadi Republike Srbije u Abu Dabiju.\n2. Da mi se saopšti ukupan broj birača sa teritorije Ujedinjenih Arapskih Emirata koji su blagovremeno podneli zahtev za glasanje u inostranstvu za izbore 25. oktobra 2026. godine, kao i, ukoliko je podatak raspoloživ, broj birača sa teritorije grada Abu Dabija.\n3. Da mi se saopšti da li je Ministarstvo spoljnih poslova u svom predlogu upućenom Republičkoj izbornoj komisiji 2. oktobra 2026. godine predložilo određivanje biračkog mesta u Ujedinjenim Arapskim Emiratima.\n4. Ukoliko Abu Dabi odnosno Ujedinjeni Arapski Emirati nisu bili obuhvaćeni predlogom Ministarstva, molim da se precizno navede iz kog razloga, kao i koji konkretan zakonski, podzakonski, organizacioni, bezbednosni ili drugi kriterijum je ocenjen kao neispunjen.\n5. Da se, ukoliko je kao razlog za izostavljanje Abu Dabija korišćena procena bezbednosne situacije ili drugi bezbednosni razlog, navede na osnovu kojih konkretnih podataka, procena ili službenih informacija je takav zaključak donet, kao i da li su isti kriterijumi primenjeni na sva druga diplomatsko-konzularna predstavništva Republike Srbije u inostranstvu.\n6. Da mi se omogući uvid odnosno dostavi kopija predloga Ministarstva spoljnih poslova upućenog Republičkoj izbornoj komisiji 2. oktobra 2026. godine, u delu koji se odnosi na određivanje biračkih mesta u inostranstvu, uključujući deo iz kojeg se može utvrditi da li je Ujedinjeni Arapski Emirati odnosno Abu Dabi bio razmatran ili predložen.\n7. Da se objasni zbog čega je Ambasada Republike Srbije u Abu Dabiju primala i evidentirala prijave građana za glasanje u inostranstvu do isteka zakonskog roka, ukoliko u trenutku odlučivanja Ministarstvo nije predložilo određivanje biračkog mesta na teritoriji Ujedinjenih Arapskih Emirata.\n8. Da se posebno razmotri mogućnost da Republička izborna komisija, u okviru svojih zakonskih ovlašćenja, naknadno odredi biračko mesto u Abu Dabiju, imajući u vidu broj zainteresovanih birača, udaljenost postojećih biračkih mesta i činjenicu da je u Abu Dabiju već bilo organizovano glasanje na prethodnim izborima.",
+"IV. VREME GLASANJA U INOSTRANSTVU",
+"Posebno zahtevam preispitivanje Odluke Republičke izborne komisije o određivanju vremena početka i završetka glasanja na biračkim mestima u inostranstvu.",
+"Član 91. Zakona o izboru narodnih poslanika propisuje da glasanje traje neprekidno od 7.00 do 20.00 časova, dok za biračka mesta u inostranstvu izričito propisuje da Republička izborna komisija, vodeći računa o razlici u vremenskim zonama, određuje vreme početka i završetka glasanja tako da glasanje traje 13 časova i završi se najkasnije u 20.00 časova po vremenu u Republici Srbiji.",
+"Imajući u vidu navedenu zakonsku odredbu, kao i činjenicu da je na prethodnim izborima biračima u inostranstvu bilo omogućeno glasanje u dužem vremenskom periodu, zahtevam da Republička izborna komisija preispita važeću odluku o vremenu glasanja i razmotri mogućnost određivanja glasanja od 7.00 do 20.00 časova po lokalnom vremenu, odnosno drugog režima koji bi u najvećoj mogućoj meri omogućio biračima u različitim vremenskim zonama da ostvare svoje biračko pravo.",
+"Posebno molim da se pri tome vodi računa o tome da birači u različitim vremenskim zonama ne budu faktički dovedeni u nepovoljniji položaj zbog vremena određenog za glasanje.",
+"V. ZAHTEV ZA OBRAZLOŽEN I HITAN ODGOVOR",
+"S obzirom na neposrednu blizinu dana glasanja i činjenicu da se radi o ostvarivanju ustavnog i zakonskog biračkog prava, molim da se ovom obraćanju postupi hitno i da mi se dostavi pisani odgovor bez odlaganja.",
+"Molim da odgovor naročito sadrži:",
+"1. broj prijavljenih birača iz Ujedinjenih Arapskih Emirata;\n2. informaciju da li je Abu Dabi bio razmatran u postupku određivanja biračkih mesta;\n3. razloge zbog kojih biračko mesto u Abu Dabiju nije predloženo i/ili određeno;\n4. kriterijume i podatke na osnovu kojih je takva odluka doneta;\n5. informaciju da li postoji mogućnost naknadnog određivanja biračkog mesta u Abu Dabiju pre 25. oktobra 2026. godine;\n6. informaciju o pravnom sredstvu koje biraču stoji na raspolaganju radi osporavanja odluke kojom mu je faktički onemogućeno da glasa u državi svog boravišta;\n7. odgovor na zahtev za preispitivanje vremena glasanja u inostranstvu.",
+"Ovaj zahtev podnosim sa ciljem da se, u okviru važećih zakonskih ovlašćenja i pre dana glasanja, pronađe rešenje kojim bi se biračima Republike Srbije koji se nalaze na teritoriji Ujedinjenih Arapskih Emirata omogućilo stvarno i delotvorno ostvarivanje biračkog prava.",
+"Molim da mi odgovor bude dostavljen elektronskim putem na adresu elektronske pošte sa koje je ovaj zahtev upućen.",
+"S poštovanjem,\n" + ime + "\n" + f.sign + "\nAbu Dabi, Ujedinjeni Arapski Emirati\n" + mail
+    ].join("\n\n");
+  }
+
+
+function podaci() { return { ime: $("ime").value.trim(), mail: $("mail").value.trim(), rod: $("rod").value }; }
+const mailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+function nedostaje(p) {
+  const m = [];
+  if (p.ime.length < 2) m.push("ime i prezime");
+  if (!mailOk(p.mail)) m.push("ispravan e-mail");
+  return m;
+}
+function napravi(p) { return ascii(body(p.rod, p.ime || "[ime i prezime]", p.mail || "[e-mail]")); }
+const predmet = () => $("predmet").value;
+const telo = () => $("tekst").value;
+let rucno = false, poslednji = "";
+function osvezi() {
+  const novi = napravi(podaci());
+  if (!rucno) { $("tekst").value = novi; poslednji = novi; }
+  $("edited").hidden = !rucno;
+  const m = nedostaje(podaci());
+  $("missing").textContent = m.length ? "Još nedostaje: " + m.join(", ") + "." : "";
+  linkovi();
+}
+
+// ---------- slanje (isto kao na stranici za prigovor, testirano na Androidu i iPhone-u) ----------
+function platforma() {
+  const ua = navigator.userAgent || "";
+  const android = /Android/i.test(ua);
+  const ios = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1);
+  const inapp = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|WhatsApp|Messenger|Viber|Telegram|; wv\)/i.test(ua) || (ios && !/Safari\//.test(ua));
+  return { android, ios, mob: android || ios, inapp };
+}
+const P = platforma();
+function mejlLinkovi(TOa, su, body) {
+  const q = encodeURIComponent, to = TOa.join(",");
+  const parametri = (sep, suKey) => `to=${q(TOa.join(sep))}&${suKey}=${q(su)}&body=${q(body)}`;
+  const mailto = `mailto:${to}?subject=${q(su)}&body=${q(body.replace(/\n/g, "\r\n"))}`;
+  // Android: ceo mailto u intent-u (Gmail ne čita predmet i tekst iz extras); bez aplikacije otvara se veb verzija
+  const ad = mailto.slice(7), ex = (x) => q(x).replace(/;/g, "%3B");
+  const intent = (pkg, web) => `intent:${ad}#Intent;action=android.intent.action.SENDTO;scheme=mailto;package=${pkg};` +
+    `S.browser_fallback_url=${q(web)};end`; // tekst je dug: ide samo jednom (u mailto delu), da intent ne postane predugacak
+  const web = {
+    gmail: `https://mail.google.com/mail/?view=cm&fs=1&${parametri(",", "su")}`,
+    outlook: `https://outlook.live.com/mail/0/deeplink/compose?${parametri(";", "subject")}`,
+    o365: `https://outlook.office.com/mail/deeplink/compose?${parametri(";", "subject")}`,
+    yahoo: `https://compose.mail.yahoo.com/?${parametri(",", "subject")}`,
+  };
+  if (P.android) return {
+    gmail: intent("com.google.android.gm", web.gmail), outlook: intent("com.microsoft.office.outlook", web.outlook),
+    o365: intent("com.microsoft.office.outlook", web.o365), yahoo: intent("com.yahoo.mobile.client.android.mail", web.yahoo), mailto,
+  };
+  if (P.ios) return {
+    gmail: `googlegmail:///co?${parametri(",", "subject")}`, outlook: `ms-outlook://compose?${parametri(",", "subject")}`,
+    o365: `ms-outlook://compose?${parametri(",", "subject")}`, yahoo: `ymail://mail/compose?${parametri(",", "subject")}`, mailto,
+  };
+  return Object.assign({ mailto }, web);
+}
+function linkovi() {
+  const su = predmet(), body = telo(), u = mejlLinkovi(TO, su, body);
+  for (const k of ["gmail", "outlook", "o365", "yahoo", "mailto"]) $("s-" + k).href = u[k];
+  $("v-to").textContent = TO.join(", ");
+  $("v-su").textContent = su;
+  $("v-body").textContent = body.slice(0, 220) + "…";
+}
+(function uredjaj() {
+  if (!P.mob) return;
+  document.querySelectorAll("a.send").forEach((a) => { a.removeAttribute("target"); a.removeAttribute("rel"); });
+  $("s-gmail").textContent = "Gmail aplikacija";
+  $("s-outlook").textContent = "Outlook aplikacija";
+  $("s-o365").hidden = true;
+  $("s-yahoo").textContent = "Yahoo Mail aplikacija";
+  if (P.ios) {
+    $("prov").insertBefore($("s-mailto"), $("s-gmail"));
+    $("s-mailto").classList.remove("sec");
+    $("s-mailto").textContent = "Mail aplikacija (iPhone)";
+  }
+  $("mob-savet").hidden = false;
+  $("mob-savet").textContent = P.inapp
+    ? "Stranica je otvorena unutar druge aplikacije (WhatsApp, Instagram, Viber…), gde dugmad za mejl često ne rade. Otvori je u Chrome-u ili Safariju (⋮ ili ⋯ → Otvori u pregledaču)."
+    : "Na telefonu dugme otvara aplikaciju za mejl, ako je instalirana. Ako se ništa ne desi, probaj drugo dugme ili kopiraj polja ispod.";
+})();
+
+
+// ---------- događaji ----------
+["ime", "mail"].forEach((id) => $(id).addEventListener("input", osvezi));
+$("rod").addEventListener("change", osvezi);
+$("predmet").addEventListener("input", linkovi);
+$("tekst").addEventListener("input", () => { rucno = $("tekst").value !== poslednji; $("edited").hidden = !rucno; linkovi(); });
+$("regen").addEventListener("click", () => { rucno = false; osvezi(); });
+
+$("primaoci").innerHTML = PRIM.map((r) => `<li><span style="font-family:var(--f-mono);font-size:13px;overflow-wrap:anywhere">${r[0]}</span> <span class="hint">${r[1]}</span></li>`).join("");
+$("predmet").value = PREDMET;
+osvezi();
+</script>
+
+</body>
+</html>
