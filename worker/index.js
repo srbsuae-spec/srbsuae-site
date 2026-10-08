@@ -14,8 +14,10 @@ export default {
     try {
       if (url.pathname === '/vote' && request.method === 'POST') return withCors(await vote(request, env), cors);
       if (url.pathname === '/results' && request.method === 'GET') return withCors(await results(env), cors);
-      if (url.pathname === '/rik' && request.method === 'POST') return withCors(await rikVote(request, env), cors);
-      if (url.pathname === '/rik-results' && request.method === 'GET') return withCors(await rikResults(env), cors);
+      if (url.pathname === '/rik' && request.method === 'POST') return withCors(await sentPoll(request, env, 'rik_votes', 'rik'), cors);
+      if (url.pathname === '/rik-results' && request.method === 'GET') return withCors(await sentResults(env, 'rik_votes'), cors);
+      if (url.pathname === '/zahtev' && request.method === 'POST') return withCors(await sentPoll(request, env, 'zahtev_votes', 'zahtev'), cors);
+      if (url.pathname === '/zahtev-results' && request.method === 'GET') return withCors(await sentResults(env, 'zahtev_votes'), cors);
       if (url.pathname === '/letter' && request.method === 'POST') return withCors(await letterUse(request, env), cors);
       if (url.pathname === '/letter-count' && request.method === 'GET') return withCors(await letterCount(env), cors);
       if (url.pathname === '/subscribe' && request.method === 'POST') return withCors(await subscribe(request, env), cors);
@@ -81,13 +83,14 @@ async function vote(request, env) {
 
 // Second poll: did the visitor send the email to the electoral commission?
 // Same protections as /vote, separate table, no link to survey answers or emails.
-async function rikVote(request, env) {
+// "Did you send it?" polls. `table` is one of our own constants, never user input.
+async function sentPoll(request, env, table, limitKey) {
   const ip = request.headers.get('cf-connecting-ip') || 'unknown';
   if (!(request.headers.get('content-type') || '').includes('application/json')) return json({ error: 'bad_request' }, 415);
   const raw = await request.text();
   if (raw.length > 1024) return json({ error: 'bad_request' }, 413);
 
-  const { success } = await env.RATE_LIMIT.limit({ key: `rik:${ip}` });
+  const { success } = await env.RATE_LIMIT.limit({ key: `${limitKey}:${ip}` });
   if (!success) return json({ error: 'rate_limited' }, 429);
 
   let body;
@@ -104,25 +107,25 @@ async function rikVote(request, env) {
   if (!verdict.success) return json({ error: 'captcha' }, 400);
 
   const hourlyCap = Number(env.HOURLY_CAP) || 200;
-  const recent = await env.DB.prepare('SELECT COUNT(*) AS n FROM rik_votes WHERE ts > ?')
+  const recent = await env.DB.prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE ts > ?`)
     .bind(Date.now() - 3600_000).first();
   if (recent.n >= hourlyCap) return json({ error: 'busy' }, 503);
 
   const voter = await hmac(env.VOTER_SALT, ip);
   const maxPerVoter = Number(env.RIK_MAX_PER_VOTER) || 3;
-  const mine = await env.DB.prepare('SELECT COUNT(*) AS n FROM rik_votes WHERE voter = ?').bind(voter).first();
+  const mine = await env.DB.prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE voter = ?`).bind(voter).first();
   if (mine.n >= maxPerVoter) return json({ error: 'already_voted' }, 409);
 
-  await env.DB.prepare('INSERT INTO rik_votes (ts, sent, voter) VALUES (?, ?, ?)')
+  await env.DB.prepare(`INSERT INTO ${table} (ts, sent, voter) VALUES (?, ?, ?)`)
     .bind(Date.now(), sent, voter).run();
   return json({ ok: true }, 201);
 }
 
-async function rikResults(env) {
+async function sentResults(env, table) {
   const minPublic = Number(env.MIN_PUBLIC) || 30;
   const row = await env.DB.prepare(`
     SELECT COUNT(*) AS total, COALESCE(SUM(sent = 'yes'), 0) AS sent
-    FROM rik_votes WHERE hidden = 0`).first();
+    FROM ${table} WHERE hidden = 0`).first();
   const body = row.total < minPublic ? { visible: false } : { visible: true, total: row.total, sent: row.sent };
   return json(body, 200, { 'cache-control': 'public, max-age=60' });
 }

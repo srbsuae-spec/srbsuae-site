@@ -376,13 +376,13 @@ document.querySelector('#rik-copy').addEventListener('click', async () => {
 });
 
 // Second poll: did the visitor send the email to the commission? Answers go to
-// the Worker (/rik), anonymous, no link to the survey or to the newsletter.
+// the Worker (/zahtev), anonymous, no link to the survey or to the newsletter.
 const rikPoll = document.querySelector('#rik-poll');
 const rikPollSubmitArea = rikPoll.querySelector('.rik-poll-submit');
 const rikPollButton = rikPoll.querySelector('[type="submit"]');
 const rikPollStatusEl = rikPoll.querySelector('.rik-poll-status');
 const rikPollResultsEl = rikPoll.querySelector('.rik-poll-results');
-const rikPollKey = 'srbsuae-rik-poll-v1';
+const rikPollKey = 'srbsuae-zahtev-poll-v1';
 const rikPollMessages = {
   verifying: { sr: 'Provera u toku, sačekajte nekoliko sekundi…', en: 'Verifying, please wait a few seconds…' },
   captcha_unavailable: {
@@ -413,12 +413,12 @@ function renderRikPollResults() {
   rikPollResultsEl.hidden = !r?.visible;
   if (!r?.visible) return;
   rikPollResultsEl.textContent = document.documentElement.lang === 'sr'
-    ? `Do sada: ${r.total} odgovora. Mejl RIK-u je poslalo ${r.sent}. Uzorak onih koji su odgovorili, nije reprezentativan.`
-    : `So far: ${r.total} responses. ${r.sent} sent an email to the REC. A sample of those who responded, not representative.`;
+    ? `Do sada: ${r.total} odgovora. Zahtev je poslalo ${r.sent}. Uzorak onih koji su odgovorili, nije reprezentativan.`
+    : `So far: ${r.total} responses. ${r.sent} sent the request. A sample of those who responded, not representative.`;
 }
 async function loadRikPollResults() {
   try {
-    const response = await fetch(`${rikPoll.dataset.api}/rik-results`);
+    const response = await fetch(`${rikPoll.dataset.api}/zahtev-results`);
     if (response.ok) { rikPollResults = await response.json(); renderRikPollResults(); }
   } catch { /* Results are optional. */ }
 }
@@ -465,7 +465,7 @@ rikPoll.addEventListener('submit', async event => {
   rikPollStatus = '';
   updateRikPoll();
   try {
-    const response = await fetch(`${rikPoll.dataset.api}/rik`, {
+    const response = await fetch(`${rikPoll.dataset.api}/zahtev`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ sent: rikPoll.querySelector('[name="sent"]:checked').value, token: rikPollToken })

@@ -27,3 +27,13 @@ CREATE TABLE IF NOT EXISTS letter_uses (
   hidden INTEGER NOT NULL DEFAULT 0
 );
 CREATE UNIQUE INDEX IF NOT EXISTS letter_uses_voter ON letter_uses (voter);
+
+CREATE TABLE IF NOT EXISTS zahtev_votes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts INTEGER NOT NULL,
+  sent TEXT NOT NULL CHECK (sent IN ('yes','no')),
+  voter TEXT NOT NULL,
+  hidden INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS zahtev_votes_ts ON zahtev_votes (ts);
+CREATE INDEX IF NOT EXISTS zahtev_votes_voter ON zahtev_votes (voter);
