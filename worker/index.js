@@ -16,6 +16,8 @@ export default {
       if (url.pathname === '/results' && request.method === 'GET') return withCors(await results(env), cors);
       if (url.pathname === '/rik' && request.method === 'POST') return withCors(await rikVote(request, env), cors);
       if (url.pathname === '/rik-results' && request.method === 'GET') return withCors(await rikResults(env), cors);
+      if (url.pathname === '/letter' && request.method === 'POST') return withCors(await letterUse(request, env), cors);
+      if (url.pathname === '/letter-count' && request.method === 'GET') return withCors(await letterCount(env), cors);
       if (url.pathname === '/subscribe' && request.method === 'POST') return withCors(await subscribe(request, env), cors);
       if (url.pathname === '/status' && request.method === 'GET') return withCors(await status(request, env), cors);
     } catch (error) {
@@ -122,6 +124,35 @@ async function rikResults(env) {
     SELECT COUNT(*) AS total, COALESCE(SUM(sent = 'yes'), 0) AS sent
     FROM rik_votes WHERE hidden = 0`).first();
   const body = row.total < minPublic ? { visible: false } : { visible: true, total: row.total, sent: row.sent };
+  return json(body, 200, { 'cache-control': 'public, max-age=60' });
+}
+
+// Counts how many networks used the letter to the commission (opened the mail
+// app or copied the text). One count per network (keyed hash of the IP, unique
+// index), nothing else stored. No captcha: it is a plain click counter.
+async function letterUse(request, env) {
+  const ip = request.headers.get('cf-connecting-ip') || 'unknown';
+  if (!(request.headers.get('content-type') || '').includes('application/json')) return json({ error: 'bad_request' }, 415);
+  const raw = await request.text();
+  if (raw.length > 256) return json({ error: 'bad_request' }, 413);
+
+  const { success } = await env.RATE_LIMIT.limit({ key: `letter:${ip}` });
+  if (!success) return json({ error: 'rate_limited' }, 429);
+
+  let body;
+  try { body = JSON.parse(raw); } catch { return json({ error: 'bad_request' }, 400); }
+  if (!['mail', 'copy'].includes(body?.kind)) return json({ error: 'bad_request' }, 400);
+
+  const voter = await hmac(env.VOTER_SALT, ip);
+  await env.DB.prepare('INSERT OR IGNORE INTO letter_uses (ts, kind, voter) VALUES (?, ?, ?)')
+    .bind(Date.now(), body.kind, voter).run();
+  return json({ ok: true }, 201);
+}
+
+async function letterCount(env) {
+  const minPublic = Number(env.MIN_PUBLIC) || 30;
+  const row = await env.DB.prepare('SELECT COUNT(*) AS total FROM letter_uses WHERE hidden = 0').first();
+  const body = row.total < minPublic ? { visible: false } : { visible: true, total: row.total };
   return json(body, 200, { 'cache-control': 'public, max-age=60' });
 }
 

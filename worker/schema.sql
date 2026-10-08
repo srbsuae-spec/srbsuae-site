@@ -18,3 +18,12 @@ CREATE TABLE IF NOT EXISTS rik_votes (
 );
 CREATE INDEX IF NOT EXISTS rik_votes_ts ON rik_votes (ts);
 CREATE INDEX IF NOT EXISTS rik_votes_voter ON rik_votes (voter);
+
+CREATE TABLE IF NOT EXISTS letter_uses (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts INTEGER NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('mail','copy')),
+  voter TEXT NOT NULL,
+  hidden INTEGER NOT NULL DEFAULT 0
+);
+CREATE UNIQUE INDEX IF NOT EXISTS letter_uses_voter ON letter_uses (voter);

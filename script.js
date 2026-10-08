@@ -322,8 +322,8 @@ document.querySelectorAll('[data-newsletter]').forEach(setupNewsletter);
 // Nothing is sent to or stored by this site.
 const rikSubject = document.querySelector('#rik-subject');
 const rikBody = document.querySelector('#rik-body');
-const rikTo = 'rik@parlament.rs';
-const rikCc = 'izbori@parlament.rs';
+const rikTo = 'rik@parlament.rs,izbori@parlament.rs';
+const rikCc = 'ozabi@mfa.rs,okp@mfa.rs,consular.abudhabi@mfa.rs,srb.emb.uae@mfa.rs,sekretarijat.mduls@mduls.gov.rs';
 const rikStatus = document.querySelector('#rik-status');
 const rikCopied = { sr: 'Tekst je kopiran.', en: 'Text copied.' };
 function rikLink() {
@@ -334,7 +334,36 @@ function rikLink() {
 rikSubject.addEventListener('input', rikLink);
 rikBody.addEventListener('input', rikLink);
 rikLink();
+const rikCountEl = document.querySelector('#rik-count');
+let rikCountTotal = null;
+function renderRikCount() {
+  rikCountEl.hidden = rikCountTotal === null;
+  if (rikCountTotal === null) return;
+  rikCountEl.textContent = document.documentElement.lang === 'sr'
+    ? `Pismo je do sada iskoristilo ${rikCountTotal} ljudi.`
+    : `${rikCountTotal} people have used this letter so far.`;
+}
+async function loadRikCount() {
+  try {
+    const response = await fetch(`${rikPoll.dataset.api}/letter-count`);
+    const data = response.ok ? await response.json() : null;
+    rikCountTotal = data?.visible ? data.total : null;
+    renderRikCount();
+  } catch { /* Counter is optional. */ }
+}
+// Anonymous: the server counts one use per network; failures are ignored.
+function countRikUse(kind) {
+  fetch(`${rikPoll.dataset.api}/letter`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ kind }),
+    keepalive: true
+  }).then(() => loadRikCount()).catch(() => {});
+}
+document.querySelector('#rik-mailto').addEventListener('click', () => countRikUse('mail'));
+loadRikCount();
 document.querySelector('#rik-copy').addEventListener('click', async () => {
+  countRikUse('copy');
   const text = `${rikTo}\nCC: ${rikCc}\n${rikSubject.value}\n\n${rikBody.value}`;
   try {
     await navigator.clipboard.writeText(text);
