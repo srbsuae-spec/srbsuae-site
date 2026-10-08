@@ -124,6 +124,7 @@ footer{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:
   <div class="note"><b>Prima:</b>
     <ul id="primaoci" style="margin:6px 0 0;padding-left:20px;font-size:14px"></ul>
   </div>
+  <p class="note">Dugme kopira tekst i otvara novu poruku sa primaocima i predmetom. U poruci samo nalepi tekst.</p>
   <p class="missing" id="missing" role="status"></p>
   <div class="prov" id="prov">
     <a class="btn send" id="s-gmail" target="_blank" rel="noopener">Gmail</a>
@@ -257,8 +258,8 @@ function platforma() {
 const P = platforma();
 function mejlLinkovi(TOa, su, body) {
   const q = encodeURIComponent, to = TOa.join(",");
-  const parametri = (sep, suKey) => `to=${q(TOa.join(sep))}&${suKey}=${q(su)}&body=${q(body)}`;
-  const mailto = `mailto:${to}?subject=${q(su)}&body=${q(body.replace(/\n/g, "\r\n"))}`;
+  const parametri = (sep, suKey) => `to=${q(TOa.join(sep))}&${suKey}=${q(su)}`; // tekst ne ide u link: predugacak je (Gmail vraca 400, Safari javlja nevazecu adresu); kopira se na klik
+  const mailto = `mailto:${to}?subject=${q(su)}`;
   // Android: ceo mailto u intent-u (Gmail ne čita predmet i tekst iz extras); bez aplikacije otvara se veb verzija
   const ad = mailto.slice(7), ex = (x) => q(x).replace(/;/g, "%3B");
   const intent = (pkg, web) => `intent:${ad}#Intent;action=android.intent.action.SENDTO;scheme=mailto;package=${pkg};` +
@@ -311,6 +312,49 @@ $("rod").addEventListener("change", osvezi);
 $("predmet").addEventListener("input", linkovi);
 $("tekst").addEventListener("input", () => { rucno = $("tekst").value !== poslednji; $("edited").hidden = !rucno; linkovi(); });
 $("regen").addEventListener("click", () => { rucno = false; osvezi(); });
+
+async function kopiraj(txt) {
+  try { await navigator.clipboard.writeText(txt); return true; }
+  catch (_) {
+    const t = document.createElement("textarea"); t.value = txt; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
+    document.body.appendChild(t); t.select();
+    let ok = false; try { ok = document.execCommand("copy"); } catch (_) {}
+    t.remove(); return ok;
+  }
+}
+
+// Dugme za slanje: kopira ceo tekst (predugacak je za link) i otvara novu poruku sa primaocima i predmetom.
+document.querySelectorAll("a.send").forEach((a) => a.addEventListener("click", (e) => {
+  const m = nedostaje(podaci());
+  if (m.length) {
+    e.preventDefault();
+    $("missing").textContent = "Pre slanja popuni: " + m.join(", ") + ".";
+    $("missing").scrollIntoView({ block: "center", behavior: "smooth" });
+    return;
+  }
+  kopiraj(telo()).then((ok) => {
+    $("toast").textContent = ok
+      ? "Tekst je kopiran. U novoj poruci dodirni telo poruke i nalepi (Nalepi / Ctrl+V). Ako se poruka nije otvorila, probaj drugo dugme."
+      : "Kopiranje nije uspelo. Kopiraj tekst dugmetom ispod, pa ga nalepi u poruku.";
+  });
+  $("nije-otvoreno").textContent = "";
+  if (P.mob) {
+    let otislo = false;
+    const vis = () => { if (document.hidden) otislo = true; };
+    document.addEventListener("visibilitychange", vis);
+    window.addEventListener("pagehide", vis);
+    setTimeout(() => {
+      document.removeEventListener("visibilitychange", vis);
+      if (!otislo && !document.hidden) $("nije-otvoreno").textContent = "Izgleda da se aplikacija nije otvorila. Probaj drugo dugme ili kopiraj polja ispod.";
+    }, 2500);
+  }
+}));
+
+document.querySelectorAll("[data-copy]").forEach((b) => b.addEventListener("click", async () => {
+  const k = b.dataset.copy, v = { to: TO.join(", "), su: predmet(), body: telo() }[k];
+  const poruke = { to: "Adrese su kopirane.", su: "Predmet je kopiran.", body: "Tekst je kopiran." };
+  $("toast").textContent = (await kopiraj(v)) ? poruke[k] + " Nalepi u mejl." : "Kopiranje nije uspelo. Označi tekst u koraku 2 i kopiraj ga ručno.";
+}));
 
 $("primaoci").innerHTML = PRIM.map((r) => `<li><span style="font-family:var(--f-mono);font-size:13px;overflow-wrap:anywhere">${r[0]}</span> <span class="hint">${r[1]}</span></li>`).join("");
 $("predmet").value = PREDMET;
