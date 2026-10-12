@@ -83,6 +83,8 @@ legend{font-weight:600;font-size:15px;padding:0;margin-bottom:4px}
 .em-in{display:block;font-family:var(--f-mono);font-size:12.5px;overflow-wrap:anywhere}
 details.pv summary{cursor:pointer;font-size:14.5px;color:var(--navy);font-weight:600}
 details.pv pre{white-space:pre-wrap;font-family:var(--f-mono);font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:10px 12px;margin:8px 0 0;overflow-wrap:anywhere}
+.sent-box{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
 .toast{color:var(--ok);font-weight:600;font-size:14.5px;min-height:1.4em}
 ol.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
 footer{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
@@ -141,10 +143,17 @@ footer{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:
     <div class="row"><span class="k">Tekst</span><span class="v" id="v-body"></span><button type="button" class="btn sec small" data-copy="body">Kopiraj</button></div>
   </div>
   <p class="toast" id="toast" role="status"></p>
+  <div class="sent-box">
+    <p class="note"><b>Kad pošalješ mejl, klikni ovde.</b> Služi samo da vidimo koliko je zahteva poslato. Šalje se samo potvrda, bez imena, e-maila i teksta.</p>
+    <div class="btns"><button type="button" class="btn" id="poslao" disabled>Poslao/la sam mejl</button></div>
+    <p class="toast" id="poslao-status" role="status"></p>
+    <div id="ts-poslao"></div>
+  </div>
+
 </section>
 
 <footer>
-  <p>Stranica ne koristi kolačiće, analitiku ni server. Sve što upišeš nestaje kad je zatvoriš.</p>
+  <p>Stranica ne koristi kolačiće ni analitiku. Sve što upišeš nestaje kad je zatvoriš. Jedino što se šalje je anonimna potvrda kad klikneš „Poslao/la sam mejl“: vreme i heš IP adrese, bez imena, e-maila i teksta.</p>
 </footer>
 </div>
 
@@ -322,5 +331,51 @@ $("predmet").value = PREDMET;
 osvezi();
 </script>
 
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+<script>
+// Dugme "Poslao/la sam": anonimna potvrda Worker-u sajta (/zahtev), isto brojanje kao anketa na glavnoj stranici.
+(function () {
+  const API = "https://srbsuae-survey.srbsuae.workers.dev", SITEKEY = "0x4AAAAAAFQDJQi3LHe8yqsZ";
+  const KEY = "srbsuae-poslao-" + location.pathname;
+  const btn = document.getElementById("poslao"), st = document.getElementById("poslao-status");
+  let token = "", widget = null, sending = false, tries = 0;
+  const poruke = {
+    already_voted: "Sa ove mreže je već zabeleženo. Hvala.",
+    rate_limited: "Previše pokušaja. Pokušaj ponovo za nekoliko minuta.",
+    captcha: "Provera nije uspela. Osveži stranicu i pokušaj ponovo.",
+    busy: "Trenutno je preopterećeno. Pokušaj kasnije.",
+    failed: "Nije zabeleženo. Pokušaj ponovo za nekoliko minuta.",
+  };
+  function gotovo(tekst) { btn.disabled = true; btn.textContent = "Hvala, zabeleženo"; st.textContent = tekst || ""; }
+  try { if (localStorage.getItem(KEY)) gotovo(); } catch (_) {}
+  function osvezi() { if (!btn.dataset.done) btn.disabled = sending || !token; }
+  function init() {
+    if (widget !== null || btn.textContent.startsWith("Hvala")) return;
+    if (!window.turnstile) { if (++tries < 50) setTimeout(init, 300); else st.textContent = poruke.captcha; return; }
+    widget = window.turnstile.render("#ts-poslao", {
+      sitekey: SITEKEY, appearance: "interaction-only",
+      callback: (v) => { token = v; osvezi(); },
+      "expired-callback": () => { token = ""; osvezi(); },
+      "error-callback": () => { token = ""; st.textContent = poruke.captcha; osvezi(); },
+    });
+  }
+  init();
+  btn.addEventListener("click", async () => {
+    if (btn.disabled) return;
+    sending = true; osvezi(); st.textContent = "";
+    try {
+      const r = await fetch(API + "/zahtev", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ sent: "yes", token }) });
+      if (r.status === 201 || r.status === 409) {
+        btn.dataset.done = "1"; try { localStorage.setItem(KEY, "1"); } catch (_) {}
+        gotovo(r.status === 409 ? poruke.already_voted : "");
+        return;
+      }
+      const e = await r.json().catch(() => ({}));
+      st.textContent = poruke[e.error] || poruke.failed;
+    } catch (_) { st.textContent = poruke.failed; }
+    sending = false; token = ""; if (widget !== null && window.turnstile) window.turnstile.reset(widget); osvezi();
+  });
+})();
+</script>
 </body>
 </html>
