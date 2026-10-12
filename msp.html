@@ -143,13 +143,15 @@ footer{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:
     <div class="row"><span class="k">Tekst</span><span class="v" id="v-body"></span><button type="button" class="btn sec small" data-copy="body">Kopiraj</button></div>
   </div>
   <p class="toast" id="toast" role="status"></p>
-  <div class="sent-box">
-    <p class="note"><b>Kad pošalješ mejl, klikni ovde.</b> Služi samo da vidimo koliko je zahteva poslato. Šalje se samo potvrda, bez imena, e-maila i teksta.</p>
-    <div class="btns"><button type="button" class="btn" id="poslao" disabled>Poslao/la sam mejl</button></div>
-    <p class="toast" id="poslao-status" role="status"></p>
-    <div id="ts-poslao"></div>
-  </div>
 
+</section>
+
+<section class="card" aria-labelledby="h4s">
+  <h2 id="h4s"><span class="n">4</span>Potvrdi da si poslao/la</h2>
+  <p class="note">Kad pošalješ mejl, klikni ovde. Služi samo da vidimo koliko je pisama poslato. Šalje se samo potvrda, bez imena, e-maila i teksta.</p>
+  <div class="btns"><button type="button" class="btn" id="poslao" disabled>Poslao/la sam mejl</button></div>
+  <p class="toast" id="poslao-status" role="status"></p>
+  <div id="ts-poslao"></div>
 </section>
 
 <footer>
