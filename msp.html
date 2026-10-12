@@ -333,7 +333,7 @@ osvezi();
 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <script>
-// Dugme "Poslao/la sam": anonimna potvrda Worker-u sajta (/zahtev), isto brojanje kao anketa na glavnoj stranici.
+// Dugme "Poslao/la sam": anonimna potvrda Worker-u sajta; svaka stranica ima svoj brojač (/sent/msp).
 (function () {
   const API = "https://srbsuae-survey.srbsuae.workers.dev", SITEKEY = "0x4AAAAAAFQDJQi3LHe8yqsZ";
   const KEY = "srbsuae-poslao-" + location.pathname;
@@ -364,7 +364,7 @@ osvezi();
     if (btn.disabled) return;
     sending = true; osvezi(); st.textContent = "";
     try {
-      const r = await fetch(API + "/zahtev", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ sent: "yes", token }) });
+      const r = await fetch(API + "/sent/msp", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ token }) });
       if (r.status === 201 || r.status === 409) {
         btn.dataset.done = "1"; try { localStorage.setItem(KEY, "1"); } catch (_) {}
         gotovo(r.status === 409 ? poruke.already_voted : "");

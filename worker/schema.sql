@@ -37,3 +37,14 @@ CREATE TABLE IF NOT EXISTS zahtev_votes (
 );
 CREATE INDEX IF NOT EXISTS zahtev_votes_ts ON zahtev_votes (ts);
 CREATE INDEX IF NOT EXISTS zahtev_votes_voter ON zahtev_votes (voter);
+
+-- One separate "I sent the email" counter per letter page (zahtev.html -> 'zahtev', msp.html -> 'msp').
+CREATE TABLE IF NOT EXISTS sent_pages (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  page TEXT NOT NULL,
+  ts INTEGER NOT NULL,
+  voter TEXT NOT NULL,
+  hidden INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS sent_pages_page_ts ON sent_pages (page, ts);
+CREATE INDEX IF NOT EXISTS sent_pages_page_voter ON sent_pages (page, voter);

@@ -18,6 +18,11 @@ export default {
       if (url.pathname === '/rik-results' && request.method === 'GET') return withCors(await sentResults(env, 'rik_votes'), cors);
       if (url.pathname === '/zahtev' && request.method === 'POST') return withCors(await sentPoll(request, env, 'zahtev_votes', 'zahtev'), cors);
       if (url.pathname === '/zahtev-results' && request.method === 'GET') return withCors(await sentResults(env, 'zahtev_votes'), cors);
+      const sentPath = url.pathname.match(/^\/(sent|sent-results)\/([a-z-]+)$/);
+      if (sentPath && SENT_PAGES.includes(sentPath[2])) {
+        if (sentPath[1] === 'sent' && request.method === 'POST') return withCors(await sentPage(request, env, sentPath[2]), cors);
+        if (sentPath[1] === 'sent-results' && request.method === 'GET') return withCors(await sentPageResults(env, sentPath[2]), cors);
+      }
       if (url.pathname === '/letter' && request.method === 'POST') return withCors(await letterUse(request, env), cors);
       if (url.pathname === '/letter-count' && request.method === 'GET') return withCors(await letterCount(env), cors);
       if (url.pathname === '/subscribe' && request.method === 'POST') return withCors(await subscribe(request, env), cors);
@@ -119,6 +124,50 @@ async function sentPoll(request, env, table, limitKey) {
   await env.DB.prepare(`INSERT INTO ${table} (ts, sent, voter) VALUES (?, ?, ?)`)
     .bind(Date.now(), sent, voter).run();
   return json({ ok: true }, 201);
+}
+
+// One separate counter per letter page ("I sent the email" button). `page` must be in SENT_PAGES.
+const SENT_PAGES = ['zahtev', 'msp'];
+async function sentPage(request, env, page) {
+  const ip = request.headers.get('cf-connecting-ip') || 'unknown';
+  if (!(request.headers.get('content-type') || '').includes('application/json')) return json({ error: 'bad_request' }, 415);
+  const raw = await request.text();
+  if (raw.length > 1024) return json({ error: 'bad_request' }, 413);
+
+  const { success } = await env.RATE_LIMIT.limit({ key: `sent:${ip}` });
+  if (!success) return json({ error: 'rate_limited' }, 429);
+
+  let body;
+  try { body = JSON.parse(raw); } catch { return json({ error: 'bad_request' }, 400); }
+  const { token } = body ?? {};
+  if (typeof token !== 'string' || token.length === 0 || token.length > 2048) return json({ error: 'captcha' }, 400);
+
+  const check = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    body: new URLSearchParams({ secret: env.TURNSTILE_SECRET, response: token, remoteip: ip })
+  });
+  const verdict = await check.json().catch(() => ({}));
+  if (!verdict.success) return json({ error: 'captcha' }, 400);
+
+  const hourlyCap = Number(env.HOURLY_CAP) || 200;
+  const recent = await env.DB.prepare('SELECT COUNT(*) AS n FROM sent_pages WHERE page = ? AND ts > ?')
+    .bind(page, Date.now() - 3600_000).first();
+  if (recent.n >= hourlyCap) return json({ error: 'busy' }, 503);
+
+  const voter = await hmac(env.VOTER_SALT, ip);
+  const maxPerVoter = Number(env.RIK_MAX_PER_VOTER) || 3;
+  const mine = await env.DB.prepare('SELECT COUNT(*) AS n FROM sent_pages WHERE page = ? AND voter = ?').bind(page, voter).first();
+  if (mine.n >= maxPerVoter) return json({ error: 'already_voted' }, 409);
+
+  await env.DB.prepare('INSERT INTO sent_pages (page, ts, voter) VALUES (?, ?, ?)').bind(page, Date.now(), voter).run();
+  return json({ ok: true }, 201);
+}
+
+async function sentPageResults(env, page) {
+  const minPublic = Number(env.MIN_PUBLIC) || 30;
+  const row = await env.DB.prepare('SELECT COUNT(*) AS total FROM sent_pages WHERE page = ? AND hidden = 0').bind(page).first();
+  const body = row.total < minPublic ? { visible: false } : { visible: true, total: row.total };
+  return json(body, 200, { 'cache-control': 'public, max-age=60' });
 }
 
 async function sentResults(env, table) {
